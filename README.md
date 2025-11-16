@@ -80,7 +80,7 @@
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/notemails.git
+git clone https://github.com/1llusionfx/Notletters-API-Password-Bulk-Changer
 cd notemails
 ```
 
@@ -95,7 +95,7 @@ pip install requests rich
 ```
 
 ### 3. Configure API Key
-Edit `notemails_v2.py` and replace the placeholder with your API key:
+Edit `notemails.py` and replace the placeholder with your API key:
 
 ```python
 # Replace this line
@@ -113,7 +113,7 @@ API_KEY = 'your_actual_api_key_from_notletters'
 
 ### Starting the Application
 ```bash
-python notemails_v2.py
+python notemails.py
 ```
 
 ### Main Menu Options
@@ -378,9 +378,9 @@ This tool is for educational and legitimate use only. Users are responsible for 
 
 ## 👤 Authors
 
-**1l9n & Claude**
+**1l9n**
 
-- Created with ❤️ using Python and Rich
+- Created using Python and Rich UI
 
 ---
 
@@ -404,7 +404,7 @@ If you encounter any issues or have questions:
 
 <div align="center">
 
-**Made with 💜 by 1l9n & Claude**
+**Made with by 1l9n**
 
 ⭐ Star this repository if you find it helpful!
 
