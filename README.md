@@ -58,7 +58,7 @@
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/notemails.git
+git clone https://github.com/1llusionfx/NotLetters-Email-Tool
 cd notemails
 
 # Install dependencies
@@ -73,10 +73,10 @@ rich
 
 ### 2. Configuration
 
-**First run:** The script will ask for your API Key and save it to `config.json`
+**First run:** The script will ask for your API Key and will save it to `config.json`
 
 ```bash
-python notemails_v3.py
+python notemails.py
 ```
 
 You'll be prompted:
@@ -202,7 +202,7 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 <div align="center">
 
-**Made with by 1l9n**
+**Made by 1l9n**
 
 ⭐ Star this repository if you find it helpful!
 
