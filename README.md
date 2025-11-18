@@ -1,4 +1,4 @@
-# 📧 NotEmails - Advanced Email Management Tool
+# 🔧 NotEmails - Advanced Email Management Tool
 
 <div align="center">
 
@@ -16,8 +16,6 @@
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Rich](https://img.shields.io/badge/Rich-Terminal-orange.svg)](https://github.com/Textualize/rich)
 
-[Features](#-features) • [Installation](#-installation) • [Usage](#-usage) • [API Documentation](#-api-documentation)
-
 </div>
 
 ---
@@ -25,380 +23,180 @@
 ## ✨ Features
 
 ### 🔐 Bulk Password Changer
-- Change passwords for multiple email accounts simultaneously
-- Multi-threaded processing (5 accounts per second)
-- Rate-limited to respect API constraints (10 requests/second)
-- Automatic retry handling
+- Change passwords for multiple accounts simultaneously
+- Multi-threaded processing (5 accounts/second)
+- Automatic retry handling with rate limiting
 - Export successful and failed accounts separately
-- Progress tracking with beautiful visual feedback
 
 ### 📬 Email Receiver
 - Retrieve emails from multiple accounts in bulk
-- Search filters support (keyword search)
-- Star filter (retrieve only starred emails)
-- Display email previews in the terminal
-- Save emails to organized directory structure
-- Export accounts with emails found
+- Search filters and star filter support
+- Display previews and save to organized directory structure
 - Comprehensive statistics and reporting
 
 ### 💳 Email Purchase
 - Buy emails directly from the API
-- Support for multiple email types:
-  - **Type 0**: Limited (Лимитные)
-  - **Type 1**: Unlimited (Безлимитные)
-  - **Type 2**: RU Zone (RU зона)
-  - **Type 3**: Personal (Личные)
+- Support for 4 email types (Limited, Unlimited, RU Zone, Personal)
 - Real-time balance display
 - Automatic timestamped file saving
-- Instant balance updates after purchase
 
 ### 💰 Balance Checker
-- View account information
-- Check current balance in RUB
+- View account information and current balance
 - Monitor rate limits
-- Display account ID and username
 
 ### 🎨 Beautiful UI
 - Gradient colored ASCII banner
-- Rich terminal formatting
-- Progress bars and spinners
-- Organized panels and tables
+- Rich terminal formatting with progress bars
 - Color-coded status messages
-- Emoji indicators for better readability
+- Organized panels and tables
 
 ---
 
-## 📋 Requirements
+## 🚀 Quick Start
 
-- Python 3.7 or higher
-- Active NotLetters.com account
-- API Key from NotLetters.com
+### 1. Installation
 
----
-
-## 🚀 Installation
-
-### 1. Clone the repository
 ```bash
-git clone https://github.com/1llusionfx/Notletters-API-Password-Bulk-Changer
+# Clone repository
+git clone https://github.com/yourusername/notemails.git
 cd notemails
-```
 
-### 2. Install dependencies
-```bash
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-Or install manually:
+**Requirements:**
+```
+requests
+rich
+```
+
+### 2. Configuration
+
+**First run:** The script will ask for your API Key and save it to `config.json`
+
 ```bash
-pip install requests rich
+python notemails_v3.py
 ```
 
-### 3. Configure API Key
-Edit `notemails.py` and replace the placeholder with your API key:
-
-```python
-# Replace this line
-API_KEY = 'YOUR_API_KEY_HERE'
-
-# With your actual API key
-API_KEY = 'your_actual_api_key_from_notletters'
+You'll be prompted:
+```
+[+] Please enter your NotLetters.com API Key: ********
+[+] Save API Key to config file? Yes
 ```
 
-> 🔑 Get your API key from [NotLetters.com](https://notletters.com)
+**To change API Key:** Simply delete `config.json` or answer "Yes" when asked to change it on startup.
+
+🔑 Get your API key from [NotLetters.com](https://notletters.com)
 
 ---
 
 ## 💻 Usage
 
-### Starting the Application
-```bash
-python notemails.py
+### Input File Format
+Create a text file with email:password combinations (e.g., `accounts.txt`):
+
+```
+email1@notletters.com:password1
+email2@notletters.com:password2
+email3@notletters.com:password3
 ```
 
 ### Main Menu Options
 
-#### 1️⃣ Bulk Password Changer
-Change passwords for multiple accounts at once.
+**1️⃣ Bulk Password Changer**
+- Changes passwords for all accounts in your file
+- Creates `updated.txt` (successful accounts only)
+- Creates `updated_mail.txt` (all accounts with current passwords)
 
-**Input file format** (`accounts.txt`):
+**2️⃣ Email Receiver**
+- Retrieves emails from all accounts
+- Optional search and star filters
+- Saves to `emails_with_letters/` directory
+- Each account gets its own subdirectory
+
+**3️⃣ Buy Emails**
+- Purchase new email accounts
+- Choose from 4 types:
+  - **0** - Limited (Лимитные)
+  - **1** - Unlimited (Безлимитные)
+  - **2** - RU Zone (RU зона)
+  - **3** - Personal (Личные)
+- Saves to timestamped file
+
+**4️⃣ Check Balance**
+- View your account details and balance
+
+---
+
+## 📁 Output Files
+
+### Password Changer
 ```
-email1@notletters.com:oldpassword1
-email2@notletters.com:oldpassword2
-email3@notletters.com:oldpassword3
+updated.txt           # Successfully updated accounts
+updated_mail.txt      # All accounts with current passwords
 ```
 
-**Output files:**
-- `updated.txt` - Only successfully updated accounts
-- `updated_mail.txt` - All accounts with current passwords
-
-**Example workflow:**
-1. Select option 1 from main menu
-2. Enter path to your email list file
-3. Enter new password
-4. Confirm the operation
-5. Wait for processing
-6. Check output files
-
-#### 2️⃣ Email Receiver
-Retrieve and save emails from multiple accounts.
-
-**Features:**
-- Optional search filters (keyword search)
-- Star filter (retrieve only starred emails)
-- Save emails to files
-- Display email previews
-- Export accounts with emails
-
-**Output structure:**
+### Email Receiver
 ```
 emails_with_letters/
 ├── accounts_with_mail.txt
 ├── email1_at_notletters_com/
 │   ├── letter_1_abc12345.txt
-│   ├── letter_2_def67890.txt
-│   └── ...
+│   └── letter_2_def67890.txt
 └── email2_at_notletters_com/
     └── letter_1_ghi11223.txt
 ```
 
-#### 3️⃣ Buy Emails
-Purchase new email accounts directly from the API.
-
-**Email Types:**
-- **0 - Limited**: Standard limited accounts
-- **1 - Unlimited**: Unlimited usage accounts
-- **2 - RU Zone**: Russian zone accounts
-- **3 - Personal**: Personal accounts
-
-**Output:**
-- Displays purchased emails in terminal
-- Saves to `purchased_emails_YYYYMMDD_HHMMSS.txt`
-- Shows updated balance
-
-#### 4️⃣ Check Balance
-View your account information and current balance.
-
-**Displays:**
-- Account ID
-- Username
-- Balance (RUB)
-- Rate limit
-
----
-
-## 📡 API Documentation
-
-### Endpoints Used
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/v1/change-password` | POST | Change account password |
-| `/v1/letters` | POST | Retrieve emails |
-| `/v1/buy-emails` | POST | Purchase new emails |
-| `/v1/me` | GET | Get account information |
-
-### Rate Limits
-- **10 requests per second** maximum
-- Automatic rate limiting built-in
-- Respects API constraints
-
-### Authentication
-All requests use Bearer token authentication:
+### Email Purchase
 ```
-Authorization: Bearer YOUR_API_KEY
+purchased_emails_20250118_143022.txt
 ```
 
 ---
 
-## 📊 Examples
+## ⚙️ Configuration File
 
-### Changing Passwords
-```bash
-$ python notemails_v2.py
-# Select option 1
-[+] Please enter email list file path: accounts.txt
-[+] Enter new password: ********
+After first run, `config.json` is created:
 
-[✓] 150/150 accounts processed
-[✓] 147 successful, 3 failed
-[✓] Files saved: updated.txt, updated_mail.txt
+```json
+{
+  "api_key": "your_api_key_here"
+}
 ```
 
-### Retrieving Emails
-```bash
-$ python notemails_v2.py
-# Select option 2
-[+] Please enter email list file path: accounts.txt
-[+] Use search filters? No
-[+] Save letters to files? Yes
-
-[✓] 50 accounts with letters
-[✓] Total: 234 letters retrieved
-[✓] Letters saved to: emails_with_letters/
-```
-
-### Purchasing Emails
-```bash
-$ python notemails_v2.py
-# Select option 3
-💰 Current Balance: 5000 RUB
-[+] Select email type: 0
-[+] How many emails do you want to buy? 10
-
-[✓] Successfully purchased 10 email(s)!
-[✓] Emails saved to: purchased_emails_20250115_143022.txt
-💰 New Balance: 4000 RUB
-```
+**To reset:** Delete `config.json` and restart the script.
 
 ---
 
-## 📁 File Formats
+## 🛠️ Troubleshooting
 
-### Input File (email:password)
-```
-user1@notletters.com:password123
-user2@notletters.com:mySecurePass456
-# Comments are supported with #
-user3@notletters.com:anotherPassword789
-```
-
-### Output Files
-
-**updated.txt** (successful accounts only):
-```
-user1@notletters.com:newPassword123
-user3@notletters.com:newPassword123
-```
-
-**updated_mail.txt** (all accounts with current passwords):
-```
-user1@notletters.com:newPassword123
-user2@notletters.com:password123
-user3@notletters.com:newPassword123
-```
-
-**Letter files** (saved emails):
-```
-From: Sender Name <sender@example.com>
-Date: 2025-01-15 14:30:22
-Subject: Test Email
-Starred: No
-
-================================================================================
-
-Email content goes here...
-```
+| Issue | Solution |
+|-------|----------|
+| `API Key Not Configured` | Run script and enter your API key when prompted |
+| `File not found` | Check file path is correct |
+| `401 Unauthorized` | Verify email:password combination is correct |
+| `Rate Limit Exceeded` | Script handles this automatically, please wait |
 
 ---
 
-## 🛠️ Configuration
+## 📡 API Information
 
-### Environment Variables (Optional)
-You can also use environment variables instead of hardcoding the API key:
-
-```python
-import os
-API_KEY = os.getenv('NOTLETTERS_API_KEY', 'YOUR_API_KEY_HERE')
-```
-
-Then run:
-```bash
-export NOTLETTERS_API_KEY='your_api_key'
-python notemails_v2.py
-```
-
-### Batch Size Configuration
-Modify the batch size in the script (default: 5 accounts per second):
-```python
-batch_size = 5  # Change this value
-```
-
----
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**API Key Error**
-```
-⚠️  API Key Not Configured!
-```
-**Solution**: Edit the script and add your API key
-
-**File Not Found**
-```
-[✗] Error: File 'accounts.txt' not found!
-```
-**Solution**: Ensure the file path is correct and file exists
-
-**401 Unauthorized**
-```
-[✗] 401 Unauthorized - Wrong old password or email doesn't exist
-```
-**Solution**: Verify email:password combination is correct
-
-**Request Timeout**
-```
-[✗] Request timeout
-```
-**Solution**: Check your internet connection, API may be slow
-
-**Rate Limit Exceeded**
-```
-[✗] Failed with status 429
-```
-**Solution**: Wait a moment, the script will automatically handle rate limiting
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- **Base URL:** `https://api.notletters.com`
+- **Rate Limit:** 10 requests/second (handled automatically)
+- **Authentication:** Bearer token
 
 ---
 
 ## ⚠️ Disclaimer
 
-This tool is for educational and legitimate use only. Users are responsible for complying with NotLetters.com's Terms of Service and all applicable laws. The authors are not responsible for any misuse of this tool.
+This tool is for educational and legitimate use only. Users are responsible for complying with NotLetters.com's Terms of Service and all applicable laws.
 
 ---
 
-## 👤 Authors
+## 📄 License
 
-**1l9n**
-
-- Created using Python and Rich UI
-
----
-
-## 🌟 Acknowledgments
-
-- [NotLetters.com](https://notletters.com) - For providing the API
-- [Rich](https://github.com/Textualize/rich) - For beautiful terminal formatting
-- [Requests](https://requests.readthedocs.io/) - For HTTP requests
-
----
-
-## 📞 Support
-
-If you encounter any issues or have questions:
-
-1. Check the [Troubleshooting](#-troubleshooting) section
-2. Open an [Issue](https://github.com/yourusername/notemails/issues)
-3. Contact NotLetters.com support for API-related questions
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
