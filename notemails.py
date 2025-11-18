@@ -13,17 +13,58 @@ from rich.text import Text
 from rich import box
 from rich.markdown import Markdown
 
-# API Configuration
 API_URL_PASSWORD = "https://api.notletters.com/v1/change-password"
 API_URL_LETTERS = "https://api.notletters.com/v1/letters"
 API_URL_BUY = "https://api.notletters.com/v1/buy-emails"
 API_URL_ME = "https://api.notletters.com/v1/me"
 
-# REPLACE WITH YOUR API KEY FROM https://notletters.com
-API_KEY = 'YOUR_API_KEY_HERE'
+CONFIG_FILE = "config.json"
 
 # Initialize Rich console
 console = Console()
+
+def load_config():
+    """Load API key from config file"""
+    if os.path.exists(CONFIG_FILE):
+        try:
+            with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
+                config = json.load(f)
+                return config.get("api_key")
+        except Exception as e:
+            console.print(f"[yellow][!] Error loading config: {e}[/yellow]")
+    return None
+
+def save_config(api_key):
+    """Save API key to config file"""
+    try:
+        config = {"api_key": api_key}
+        with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
+            json.dump(config, f, indent=2)
+        console.print(f"[green][✓] API Key saved to {CONFIG_FILE}[/green]")
+        return True
+    except Exception as e:
+        console.print(f"[red][✗] Error saving config: {e}[/red]")
+        return False
+
+def get_api_key():
+    """Get API key from config or prompt user"""
+    api_key = load_config()
+    
+    if api_key:
+        console.print(f"[green][✓] API Key loaded from {CONFIG_FILE}[/green]")
+        change = Confirm.ask("[bold cyan][+][/bold cyan] Do you want to change the API Key?", default=False)
+        if not change:
+            return api_key
+    
+    console.print()
+    api_key = Prompt.ask("[bold cyan][+][/bold cyan] Please enter your NotLetters.com API Key", password=False)
+    
+    if api_key:
+        save = Confirm.ask("[bold cyan][+][/bold cyan] Save API Key to config file?", default=True)
+        if save:
+            save_config(api_key)
+    
+    return api_key
 
 def clear_terminal():
     """Clear the terminal screen"""
@@ -67,6 +108,162 @@ def print_banner():
     credit_text = create_gradient_text("made by 1l9n & Claude", "purple", "cyan")
     console.print(Panel(credit_text, border_style="purple", box=box.DOUBLE), justify="center")
     console.print()
+
+def test_api_connection(api_key):
+    """Test API connection and display detailed results"""
+    clear_terminal()
+    print_banner()
+    
+    test_panel = Panel(
+        "[cyan]Testing API connection and endpoints...[/cyan]\n"
+        "[yellow]This will verify your API key and check service status[/yellow]",
+        title="[bold purple]API Connection Test[/bold purple]",
+        border_style="cyan",
+        box=box.ROUNDED
+    )
+    console.print(test_panel, justify="center")
+    console.print()
+    
+    results = []
+    
+    # Test 1: Account Info Endpoint
+    console.print("[cyan][→] Testing account info endpoint...[/cyan]")
+    with console.status("[cyan]Checking...", spinner="dots"):
+        time.sleep(0.5)
+        balance_result = get_balance(api_key)
+        
+        if balance_result["success"]:
+            data = balance_result["data"]
+            results.append({
+                "test": "Account Info",
+                "status": "✓",
+                "message": f"Connected as {data.get('username', 'Unknown')}",
+                "style": "green"
+            })
+        else:
+            results.append({
+                "test": "Account Info",
+                "status": "✗",
+                "message": balance_result.get("message", "Failed"),
+                "style": "red"
+            })
+    
+    # Test 2: API Base URL Reachability
+    console.print("[cyan][→] Testing base API URL reachability...[/cyan]")
+    with console.status("[cyan]Checking...", spinner="dots"):
+        time.sleep(0.5)
+        try:
+            response = requests.get("https://api.notletters.com", timeout=10)
+            if response.status_code in [200, 404]:  # 404 is OK for base URL
+                results.append({
+                    "test": "API Reachability",
+                    "status": "✓",
+                    "message": "API server is online",
+                    "style": "green"
+                })
+            else:
+                results.append({
+                    "test": "API Reachability",
+                    "status": "⚠",
+                    "message": f"Unexpected status: {response.status_code}",
+                    "style": "yellow"
+                })
+        except Exception as e:
+            results.append({
+                "test": "API Reachability",
+                "status": "✗",
+                "message": f"Connection failed: {str(e)[:30]}",
+                "style": "red"
+            })
+    
+    # Test 3: Response Time
+    console.print("[cyan][→] Testing API response time...[/cyan]")
+    with console.status("[cyan]Checking...", spinner="dots"):
+        start_time = time.time()
+        get_balance(api_key)
+        response_time = (time.time() - start_time) * 1000  # Convert to ms
+        
+        if response_time < 1000:
+            status = "✓"
+            style = "green"
+            message = f"{response_time:.0f}ms (Excellent)"
+        elif response_time < 3000:
+            status = "✓"
+            style = "yellow"
+            message = f"{response_time:.0f}ms (Good)"
+        else:
+            status = "⚠"
+            style = "yellow"
+            message = f"{response_time:.0f}ms (Slow)"
+        
+        results.append({
+            "test": "Response Time",
+            "status": status,
+            "message": message,
+            "style": style
+        })
+    
+    # Display results table
+    console.print()
+    table = Table(
+        title=create_gradient_text("Connection Test Results", "purple", "cyan"),
+        box=box.DOUBLE_EDGE,
+        border_style="purple"
+    )
+    
+    table.add_column("Test", style="cyan", justify="left")
+    table.add_column("Status", style="bold", justify="center", width=8)
+    table.add_column("Details", style="white", justify="left")
+    
+    for result in results:
+        table.add_row(
+            result["test"],
+            f"[{result['style']}]{result['status']}[/{result['style']}]",
+            f"[{result['style']}]{result['message']}[/{result['style']}]"
+        )
+    
+    console.print(table, justify="center")
+    
+    # Overall status
+    console.print()
+    all_success = all(r["status"] == "✓" for r in results)
+    
+    if all_success:
+        if balance_result["success"]:
+            data = balance_result["data"]
+            success_info = Text()
+            success_info.append("✓ All systems operational\n\n", style="bold green")
+            success_info.append(f"👤 User: {data.get('username', 'Unknown')}\n", style="cyan")
+            success_info.append(f"💰 Balance: {data.get('balance', 0)} RUB\n", style="green")
+            success_info.append(f"⚡ Rate Limit: {data.get('rate_limit', 0)} req/s", style="yellow")
+            
+            status_panel = Panel(
+                success_info,
+                title="[bold green]Connection Successful[/bold green]",
+                border_style="green",
+                box=box.ROUNDED
+            )
+        else:
+            status_panel = Panel(
+                "[bold green]✓ API is reachable[/bold green]\n\n"
+                "[yellow]Some tests passed but couldn't retrieve full account info[/yellow]",
+                border_style="green",
+                box=box.ROUNDED
+            )
+    else:
+        status_panel = Panel(
+            "[bold red]✗ Connection issues detected[/bold red]\n\n"
+            "[yellow]Please check:[/yellow]\n"
+            "• Your API key is correct\n"
+            "• You have internet connection\n"
+            "• The API service is not down",
+            border_style="red",
+            box=box.ROUNDED
+        )
+    
+    console.print(status_panel, justify="center")
+    console.print("\n[bold yellow][+] Press Enter to continue...[/bold yellow]")
+    input()
 
 def get_balance(api_key):
     """Get account balance and info"""
@@ -133,13 +330,13 @@ def buy_emails(count, type_email, api_key):
             "message": f"Error: {str(e)}"
         }
 
-def show_main_menu():
+def show_main_menu(api_key):
     """Display main menu and get user choice"""
     clear_terminal()
     print_banner()
     
     # Get and display balance
-    balance_result = get_balance(API_KEY)
+    balance_result = get_balance(api_key)
     if balance_result["success"]:
         data = balance_result["data"]
         balance_info = Text()
@@ -168,7 +365,9 @@ def show_main_menu():
     menu_text.append("Buy Emails\n", style="white")
     menu_text.append("4. ", style="bold yellow")
     menu_text.append("Check Balance\n", style="white")
-    menu_text.append("5. ", style="bold red")
+    menu_text.append("5. ", style="bold blue")
+    menu_text.append("Test API Connection\n", style="white")
+    menu_text.append("6. ", style="bold red")
     menu_text.append("Exit", style="white")
     
     menu_panel = Panel(
@@ -181,7 +380,7 @@ def show_main_menu():
     
     choice = Prompt.ask(
         "[bold cyan][+][/bold cyan] Choose an option",
-        choices=["1", "2", "3", "4", "5"],
+        choices=["1", "2", "3", "4", "5", "6"],
         default="1"
     )
     return choice
@@ -894,37 +1093,39 @@ def check_balance_mode(api_key):
     input()
 
 def main():
-    """Main application entry point"""
-    # Check if API key is configured
-    if API_KEY == 'YOUR_API_KEY_HERE':
-        clear_terminal()
-        print_banner()
-        
-        error_text = Text()
-        error_text.append("⚠️  API Key Not Configured!\n\n", style="bold red")
-        error_text.append("Please edit this file and replace:\n", style="yellow")
-        error_text.append("API_KEY = 'YOUR_API_KEY_HERE'\n\n", style="cyan")
-        error_text.append("with your actual API key from:\n", style="yellow")
-        error_text.append("https://notletters.com", style="bold cyan underline")
-        
-        error_panel = Panel(
-            error_text,
-            title="[bold red]Configuration Error[/bold red]",
-            border_style="red",
-            box=box.DOUBLE
-        )
-        console.print(error_panel, justify="center")
-        console.print("\n[bold yellow][+] Press Enter to exit...[/bold yellow]")
-        input()
-        return
-    
     clear_terminal()
     print_banner()
     
-    api_key = API_KEY
+    # Get API key from config or prompt
+    api_key = get_api_key()
+    
+    if not api_key:
+        console.print("[red][✗] Error: API Key is required to run this tool![/red]")
+        console.print("[yellow][!] Please restart and provide a valid API Key.[/yellow]")
+        time.sleep(3)
+        return
+    
+    # Verify API key works
+    console.print("\n[cyan][+] Verifying API Key...[/cyan]")
+    balance_result = get_balance(api_key)
+    
+    if not balance_result["success"]:
+        console.print(f"[red][✗] API Key verification failed: {balance_result.get('message', 'Unknown error')}[/red]")
+        console.print("[yellow][!] Please check your API Key and try again.[/yellow]")
+        
+        # Remove invalid config
+        if os.path.exists(CONFIG_FILE):
+            os.remove(CONFIG_FILE)
+            console.print(f"[yellow][!] Removed invalid config file.[/yellow]")
+        
+        time.sleep(3)
+        return
+    
+    console.print("[green][✓] API Key verified successfully![/green]")
+    time.sleep(1)
     
     while True:
-        choice = show_main_menu()
+        choice = show_main_menu(api_key)
         console.print()
         
         if choice == "1":
@@ -936,13 +1137,15 @@ def main():
         elif choice == "4":
             check_balance_mode(api_key)
         elif choice == "5":
+            test_api_connection(api_key)
+        elif choice == "6":
             clear_terminal()
             print_banner()
             goodbye_text = create_gradient_text("👋 Goodbye!", "purple", "cyan")
             console.print(Panel(goodbye_text, border_style="purple", box=box.DOUBLE), justify="center")
             break
         
-        if choice in ["1", "2", "3", "4"]:
+        if choice in ["1", "2", "3", "4", "5"]:
             continue
 
 if __name__ == "__main__":
