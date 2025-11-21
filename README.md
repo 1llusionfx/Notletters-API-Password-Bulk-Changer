@@ -1,4 +1,4 @@
-# 🔧 NotEmails - Advanced Email Management Tool
+# NotEmails - Advanced Email Management Tool
 
 <div align="center">
 
@@ -20,46 +20,28 @@
 
 ---
 
-## ✨ Features
+## Features
 
-### 🔐 Bulk Password Changer
-- Change passwords for multiple accounts simultaneously
-- Multi-threaded processing (5 accounts/second)
-- Automatic retry handling with rate limiting
-- Export successful and failed accounts separately
+### Bulk Password Changer
 
-### 📬 Email Receiver
-- Retrieve emails from multiple accounts in bulk
-- Search filters and star filter support
-- Display previews and save to organized directory structure
-- Comprehensive statistics and reporting
+### Email Receiver
 
-### 💳 Email Purchase
-- Buy emails directly from the API
-- Support for 4 email types (Limited, Unlimited, RU Zone, Personal)
-- Real-time balance display
-- Automatic timestamped file saving
+### Email Purchase
 
-### 💰 Balance Checker
-- View account information and current balance
-- Monitor rate limits
+### Balance Checker
 
-### 🎨 Beautiful UI
-- Gradient colored ASCII banner
-- Rich terminal formatting with progress bars
-- Color-coded status messages
-- Organized panels and tables
+### Beautiful UI
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Installation
 
 ```bash
 # Clone repository
 git clone https://github.com/1llusionfx/NotLetters-Email-Tool
-cd notemails
+cd Notletters-Email-Tool
 
 # Install dependencies
 pip install -r requirements.txt
@@ -87,11 +69,11 @@ You'll be prompted:
 
 **To change API Key:** Simply delete `config.json` or answer "Yes" when asked to change it on startup.
 
-🔑 Get your API key from [NotLetters.com](https://notletters.com)
+Get your API key from [NotLetters.com](https://notletters.com)
 
 ---
 
-## 💻 Usage
+## Usage
 
 ### Input File Format
 Create a text file with email:password combinations (e.g., `accounts.txt`):
@@ -129,7 +111,7 @@ email3@notletters.com:password3
 
 ---
 
-## 📁 Output Files
+## Output Files
 
 ### Password Changer
 ```
@@ -155,7 +137,7 @@ purchased_emails_20250118_143022.txt
 
 ---
 
-## ⚙️ Configuration File
+## Configuration File
 
 After first run, `config.json` is created:
 
@@ -165,22 +147,22 @@ After first run, `config.json` is created:
 }
 ```
 
-**To reset:** Delete `config.json` and restart the script.
+**If you want to reset the KEY:** Delete `config.json` and restart the script.
 
 ---
 
-## 🛠️ Troubleshooting
+## Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
-| `API Key Not Configured` | Run script and enter your API key when prompted |
-| `File not found` | Check file path is correct |
-| `401 Unauthorized` | Verify email:password combination is correct |
+| `API Key Not Configured` | Run script and then enter your API key when prompted |
+| `File not found` | Check if file path is correct |
+| `401 Unauthorized` | Verify 'email:password' format and combi. is correct |
 | `Rate Limit Exceeded` | Script handles this automatically, please wait |
 
 ---
 
-## 📡 API Information
+## API Information
 
 - **Base URL:** `https://api.notletters.com`
 - **Rate Limit:** 10 requests/second (handled automatically)
@@ -188,13 +170,13 @@ After first run, `config.json` is created:
 
 ---
 
-## ⚠️ Disclaimer
+## Disclaimer
 
 This tool is for educational and legitimate use only. Users are responsible for complying with NotLetters.com's Terms of Service and all applicable laws.
 
 ---
 
-## 📄 License
+## License
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
